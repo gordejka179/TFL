@@ -36,31 +36,12 @@ void initRulesT(){
 }
 
 void initRulesT2(){
-    /*
-    allRulesT2.push_back(Rule("aaaa", "a"));
-    allRulesT2.push_back(Rule("aaab", "b"));
-    allRulesT2.push_back(Rule("bbaaa", "baab"));
-    allRulesT2.push_back(Rule("bbaab", "baa"));
-    allRulesT2.push_back(Rule("bbabb", "abab"));
-    allRulesT2.push_back(Rule("babbaa", "babba"));
-    allRulesT2.push_back(Rule("bab", "abb"));
-    allRulesT2.push_back(Rule("baa", "abb"));
-    allRulesT2.push_back(Rule("abb", "bb"));
-    allRulesT2.push_back(Rule("bba", "bb"));
     allRulesT2.push_back(Rule("bb", "ba"));
     allRulesT2.push_back(Rule("aba", "ba"));
-    */
+    allRulesT2.push_back(Rule("baa", "ba"));
+    allRulesT2.push_back(Rule("bab", "ba"));
     allRulesT2.push_back(Rule("aaaa", "a"));
-    allRulesT2.push_back(Rule("aaab", "b"));
-    allRulesT2.push_back(Rule("aaaba", "babb"));
-    allRulesT2.push_back(Rule("baba", "baab"));
-    allRulesT2.push_back(Rule("bab", "baa"));
-    allRulesT2.push_back(Rule("babbb", "babba"));
-    allRulesT2.push_back(Rule("aaba", "baa"));
-    allRulesT2.push_back(Rule("baa", "abb"));
-    allRulesT2.push_back(Rule("aba", "bb"));
-    allRulesT2.push_back(Rule("bb", "ba"));
-    
+    allRulesT2.push_back(Rule("aaab", "b"));  
 }
 
 // l - левая граница подстроки в s (индекс), которую нужно заменить по правилу

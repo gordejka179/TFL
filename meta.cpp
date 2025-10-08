@@ -30,6 +30,73 @@ bool f1(const string& prev, const string& curr){
     return false;
 }
 
+//3-ье свойство: Пусть матрица A = 1 0 и матрица B = 2 -1
+//                                 0 1               2 -1
+
+// Если заменить в строке все буквы a на матрицу A , а буквы b на матрицу B,
+//то можно посчитать произведение. В исходной системе это произведение не будет меняться
+// при любом правиле
+ 
+vector<vector<int>> A = {{1, 0} , {0, 1}};
+vector<vector<int>> B = {{2, -1} , {2, -1}};
+
+//перемножаем 2 матрицы
+vector<vector<int>> multiplyMatrixes(const vector<vector<int>>& x, const vector<vector<int>>& y){
+    int n = x.size();
+    vector<vector<int>> c(n, vector<int> (n, 0));
+    for (int row = 0; row < n; row++){
+        for (int column = 0; column < n; column++){
+            for (int k = 0; k < n; k++){
+                c[row][column] += x[row][k] * y[k][column];
+            }
+        }
+    }
+    return c; 
+}
+
+//перемножаем все матрицы
+vector<vector<int>> multiplyAllMatrixes(const string& s){
+    if (s.length() == 1){
+        if (s == "a"){
+            return A;
+        }
+        return B;
+    }
+    char c = s[0];
+    string s1 = s.substr(1, s.length() - 1);
+    if (c == 'a'){
+        return multiplyMatrixes(A, multiplyAllMatrixes(s1));
+    }
+    
+    return multiplyMatrixes(B, multiplyAllMatrixes(s1));
+
+}
+
+void print(vector<vector<int>>& a){
+    int n = a.size();
+    for (int row = 0; row < n; row++){
+        for (int column = 0; column < n; column++){
+            cout << a[row][column] << " ";
+        }
+        cout << "\n";
+    }
+}
+
+bool f2(const string& prev, const string& curr){
+    vector<vector<int>> a = multiplyAllMatrixes(prev);
+    vector<vector<int>> b = multiplyAllMatrixes(curr);
+    int n = a.size();
+    for (int row = 0; row < n; row++){
+        for (int column = 0; column < n; column++){
+            if (a[row][column] != b[row][column]){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+
 
 struct Rule{
     string l;
@@ -44,16 +111,12 @@ string alphabet = "ab";
 
 
 void initRulesT2(){
-    allRulesT2.push_back(Rule("aaaa", "a"));
-    allRulesT2.push_back(Rule("aaab", "b"));
-    allRulesT2.push_back(Rule("aaaba", "babb"));
-    allRulesT2.push_back(Rule("baba", "baab"));
-    allRulesT2.push_back(Rule("bab", "baa"));
-    allRulesT2.push_back(Rule("babbb", "babba"));
-    allRulesT2.push_back(Rule("aaba", "baa"));
-    allRulesT2.push_back(Rule("baa", "abb"));
-    allRulesT2.push_back(Rule("aba", "bb"));
     allRulesT2.push_back(Rule("bb", "ba"));
+    allRulesT2.push_back(Rule("aba", "ba"));
+    allRulesT2.push_back(Rule("baa", "ba"));
+    allRulesT2.push_back(Rule("bab", "ba"));
+    allRulesT2.push_back(Rule("aaaa", "a"));
+    allRulesT2.push_back(Rule("aaab", "b")); 
 }
 
 // l - левая граница подстроки в s (индекс), которую нужно заменить по правилу
@@ -168,6 +231,7 @@ int main(){
     vector<bool (*)(const string&, const string&)> invariants;
     invariants.push_back(&f0);
     invariants.push_back(&f1);
+    invariants.push_back(&f2);
     
     //номер инварианта
     int num = 0;
