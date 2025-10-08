@@ -90,14 +90,6 @@ int getRandomRuleT(int n) {
     return dist(gen);
 }
 
-//генерация случайного номера правила в системе T2
-// n - сколько всего правил
-int getRandomRuleT2(int n) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<int> dist(0, n - 1);
-    return dist(gen);
-}
 
 //генерация случайной строки, заданной длины n, состоящей из символов 
 //фиксированного алфавита

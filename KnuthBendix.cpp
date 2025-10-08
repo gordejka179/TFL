@@ -18,7 +18,6 @@ struct Rule{
 vector<Rule> Rules;
 
 void initRules(){
-    /*
     Rules.push_back(Rule("aaaa", "a"));
     Rules.push_back(Rule("aaab", "b"));
     Rules.push_back(Rule("bbba", "ba"));
@@ -32,13 +31,6 @@ void initRules(){
     Rules.push_back(Rule("baba", "baa"));
     Rules.push_back(Rule("babbaa", "babba"));
     Rules.push_back(Rule("babbab", "abb"));
-    */
-    Rules.push_back(Rule("bb", "ba"));
-    Rules.push_back(Rule("aba", "bb"));
-    Rules.push_back(Rule("baa", "ba"));
-    Rules.push_back(Rule("bab", "ba"));
-    Rules.push_back(Rule("aaaa", "a"));
-    Rules.push_back(Rule("aaab", "b"));
 }
 
 // l - левая граница подстроки в s (индекс), которую нужно заменить по правилу
