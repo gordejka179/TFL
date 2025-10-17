@@ -74,20 +74,25 @@ fn execute_rule(rule: &Rule, s: &mut String, l: usize) {
     s.replace_range(l..l + len, &rule.r);
 }
 
-fn check_is_rule_may_be_applied(rule: &Rule, s: &str) -> (bool, usize) {
-    if let Some(found) = s.find(&rule.l) {
-        (true, found)
-    } else {
-        (false, 0)
+fn check_is_rule_may_be_applied(rule: &Rule, s: &str) -> (bool, Vec<usize>) {
+    let mut positions = Vec::new();
+    let mut pos = 0;
+    while let Some(found) = s[pos..].find(&rule.l) {
+        let absolute_pos = pos + found;
+        positions.push(absolute_pos);
+        pos = absolute_pos + 1;
     }
+
+    let found = !positions.is_empty();
+    (found, positions)
 }
 
 fn normalize(s: &mut String) {
     unsafe {
         for rule in &ALL_RULES_T2 {
-            let (can_apply, pos) = check_is_rule_may_be_applied(rule, s);
+            let (can_apply, positions) = check_is_rule_may_be_applied(rule, s);
             if can_apply {
-                execute_rule(rule, s, pos);
+                execute_rule(rule, s, positions[0]);
                 normalize(s);
             }
         }
@@ -99,6 +104,11 @@ fn get_random_rule_t() -> usize {
     unsafe {
         rng.gen_range(0..ALL_RULES_T.len())
     }
+}
+
+fn get_random_num(n: usize) -> usize {
+    let mut rng = SimpleRng::new();
+    rng.gen_range(0..n)
 }
 
 fn get_random_string(n: usize) -> String {
@@ -122,11 +132,11 @@ fn t(s: &str) -> (String, Vec<usize>) {
         let rule_num = get_random_rule_t();
         unsafe {
             let rule = &ALL_RULES_T[rule_num];
-            let (can_apply, pos) = check_is_rule_may_be_applied(rule, &current);
+            let (can_apply, positions) = check_is_rule_may_be_applied(rule, &current);
             path.push(rule_num);
             
             if can_apply {
-                execute_rule(rule, &mut current, pos);
+                execute_rule(rule, &mut current, positions[get_random_num(positions.len())]);
             }
         }
     }

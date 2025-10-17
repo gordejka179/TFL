@@ -143,12 +143,17 @@ fn execute_rule(rule: &Rule, s: &mut String, l: usize) {
     s.replace_range(l..l + len, &rule.r);
 }
 
-fn check_is_rule_may_be_applied(rule: &Rule, s: &str) -> (bool, usize) {
-    if let Some(found) = s.find(&rule.l) {
-        (true, found)
-    } else {
-        (false, 0)
+fn check_is_rule_may_be_applied(rule: &Rule, s: &str) -> (bool, Vec<usize>) {
+    let mut positions = Vec::new();
+    let mut pos = 0;
+    while let Some(found) = s[pos..].find(&rule.l) {
+        let absolute_pos = pos + found;
+        positions.push(absolute_pos);
+        pos = absolute_pos + 1;
     }
+
+    let found = !positions.is_empty();
+    (found, positions)
 }
 
 fn get_random_rule_t2() -> usize {
@@ -156,6 +161,11 @@ fn get_random_rule_t2() -> usize {
     unsafe {
         rng.gen_range(0..ALL_RULES_T2.len())
     }
+}
+
+fn get_random_num(n: usize) -> usize {
+    let mut rng = SimpleRng::new();
+    rng.gen_range(0..n)
 }
 
 fn get_random_string(n: usize) -> String {
@@ -183,11 +193,11 @@ fn check_string(s: &str, f: fn(&str, &str) -> bool, num: i32) -> ((String, i32),
         for _ in 0..7 {
             let rule_num = get_random_rule_t2();
             let rule = &ALL_RULES_T2[rule_num];
-            let (can_apply, pos) = check_is_rule_may_be_applied(rule, &current);
+            let (can_apply, positions) = check_is_rule_may_be_applied(rule, &current);
             
             if can_apply {
                 let copy = current.clone();
-                execute_rule(rule, &mut current, pos);
+                execute_rule(rule, &mut current, positions[get_random_num(positions.len())]);
                 
                 if !f(&copy, &current) {
                     ans.0 .0 = copy;
