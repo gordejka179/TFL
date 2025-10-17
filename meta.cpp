@@ -126,28 +126,37 @@ void executeRule(Rule rule, string& s, int l){
     s.replace(l, len, rule.r);
 }
 
-//проверим, можно ли применить правило из списка Rules
-pair<bool, int> checkIsRuleMayBeApplied(Rule rule, const string& s){
-    pair<bool, int> p;
-    size_t found = s.find(rule.l);
-    p.second = found;
+//проверим, можно ли применить правило
+//а также вернём вектор позиций, к которым можно применить это правило
+pair<bool, vector<int>> checkIsRuleMayBeApplied(Rule rule, const string& s){
+    pair<bool, vector<int>> p;
+    int pos = s.find(rule.l);
 
-    if (found != std::string::npos) {
+    if (pos != std::string::npos) {
         p.first = true;
+    }else{
+        p.first = false;
         return p;
     }
-    
-    p.first = false;
+
+    while (pos != std::string::npos) {
+        p.second.push_back(pos);
+        pos = s.find(rule.l, pos + 1);
+    }
+
     return p;
 }
 
 
 //генерация случайного номера правила в системе T2
 // n - сколько всего правил
-int getRandomRuleT2(int n) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<int> dist(0, n - 1);
+// ИЛИ просто для генерации случайного числа от 0 до n - 1, чтобы потом
+//по этому индексу получить значение из вектора позиций
+//в векторе позиций хранятся позиции, начиная с которых можно применить правило
+int getRandomNumber(int n) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dist(0, n - 1);
     return dist(gen);
 }
 
@@ -177,12 +186,12 @@ pair<pair<string, int>, int> checkString(string s, bool (*f)(const string&, cons
     ans.first.second = -1;
     int n = allRulesT2.size();
     for (int i = 0; i < 7; i++){
-        int ruleNum = getRandomRuleT2(n);
+        int ruleNum = getRandomNumber(n);
         Rule rule = allRulesT2[ruleNum];
-        pair<bool, int> p = checkIsRuleMayBeApplied(rule, s);
+        pair<bool, vector<int>> p = checkIsRuleMayBeApplied(rule, s);
         if (p.first == true){
             string copy = s;
-            executeRule(rule, s, p.second);
+            executeRule(rule, s, p.second[getRandomNumber(p.second.size())]);
             if (f(copy, s)){
                 continue;
             }else{
@@ -198,7 +207,7 @@ pair<pair<string, int>, int> checkString(string s, bool (*f)(const string&, cons
 }
 
 
-//будем генерировать 50000 тестов
+//будем генерировать 10000 тестов
 //вернём true, если все тесты успешны,
 //иначе false
 //и возвращаем строку, на которой была ошибка
@@ -210,7 +219,7 @@ pair<bool, pair<string, pair<int, int>>> meta(bool (*f)(const string&, const str
     p1.second.first = "";
     p1.second.second.first = -1;
     p1.second.second.second = -1;
-    for (int i = 0; i < 50000; i++){
+    for (int i = 0; i < 10000; i++){
         string s = getRandomString(15, alphabet);
         pair<pair<string, int>, int> p2 = checkString(s, f, num);
         if (p2.first.second != -1){

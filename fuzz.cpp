@@ -48,21 +48,28 @@ void initRulesT2(){
 void executeRule(Rule rule, string& s, int l){
     //string& replace (size_t pos, size_t len, const string& str);
     int len = rule.l.length();
+    //cout << l << " " << rule.l << " " << rule.r << endl;
     s.replace(l, len, rule.r);
 }
 
-//проверим, можно ли применить правило из списка Rules
-pair<bool, int> checkIsRuleMayBeApplied(Rule rule, const string& s){
-    pair<bool, int> p;
-    size_t found = s.find(rule.l);
-    p.second = found;
+//проверим, можно ли применить правило
+//а также вернём вектор позиций, к которым можно применить это правило
+pair<bool, vector<int>> checkIsRuleMayBeApplied(Rule rule, const string& s){
+    pair<bool, vector<int>> p;
+    int pos = s.find(rule.l);
 
-    if (found != std::string::npos) {
+    if (pos != std::string::npos) {
         p.first = true;
+    }else{
+        p.first = false;
         return p;
     }
-    
-    p.first = false;
+
+    while (pos != std::string::npos) {
+        p.second.push_back(pos);
+        pos = s.find(rule.l, pos + 1);
+    }
+
     return p;
 }
 
@@ -70,9 +77,9 @@ pair<bool, int> checkIsRuleMayBeApplied(Rule rule, const string& s){
 //приводим строку к нормальной форме
 void normalize(string& s){
     for (Rule rule: allRulesT2){
-        pair<bool, int> p = checkIsRuleMayBeApplied(rule, s);
+        pair<bool, vector<int>> p = checkIsRuleMayBeApplied(rule, s);
         if (p.first){
-            executeRule(rule, s, p.second);
+            executeRule(rule, s, p.second[0]);
             normalize(s);
         }else{
             continue;
@@ -83,12 +90,16 @@ void normalize(string& s){
 
 //генерация случайного номера правила в системе T
 // n - сколько всего правил
-int getRandomRuleT(int n) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<int> dist(0, n - 1);
+// ИЛИ просто для генерации случайного числа от 0 до n - 1, чтобы потом
+//по этому индексу получить значение из вектора позиций
+//в векторе позиций хранятся позиции, начиная с которых можно применить правило
+int getRandomNumber(int n) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dist(0, n - 1);
     return dist(gen);
 }
+
 
 
 //генерация случайной строки, заданной длины n, состоящей из символов 
@@ -110,12 +121,12 @@ pair<string, vector<int>> T(string s){
     vector<int> path;
     int n = allRulesT.size();
     for (int i = 0; i < 7; i++){
-        int ruleNum = getRandomRuleT(n);
+        int ruleNum = getRandomNumber(n);
         Rule rule = allRulesT[ruleNum];
-        pair<bool, int> p = checkIsRuleMayBeApplied(rule, s);
+        pair<bool, vector<int>> p = checkIsRuleMayBeApplied(rule, s);
         path.push_back(ruleNum);
         if (p.first == true){
-            executeRule(rule, s, p.second);
+            executeRule(rule, s, p.second[getRandomNumber(p.second.size())]);
         }
     }
     
